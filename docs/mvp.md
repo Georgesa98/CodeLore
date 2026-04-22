@@ -5,7 +5,7 @@
 ---
 
 ## Feature 1 — Project Detection
-**Status:** `[ ] Not Started`
+**Status:** `[X] In Progress`
 
 The foundation. Every tool call goes through this first.
 
