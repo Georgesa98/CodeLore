@@ -19,7 +19,9 @@ export class ProjectDetectionError extends Error {
     }
 }
 
-export function toToolErrorResult(error: unknown) {
+import type { ToolErrorContent } from "./types.ts";
+
+export function toToolErrorResult(error: unknown): ToolErrorContent {
     const message =
         error instanceof Error ? error.message : "Unknown tool error";
 

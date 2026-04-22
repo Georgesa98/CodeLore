@@ -7,21 +7,23 @@
 ## Feature 1 — Project Detection
 **Status:** `[X] In Progress`
 
-The foundation. Every tool call goes through this first.
+The internal foundation. Not exposed as a public tool — runs automatically before Feature 2+ tools.
 
 ### Tasks
-- [ ] Read `cwd` from MCP request context
-- [ ] Query SQLite for matching `repoPath`
-- [ ] Auto-create project if not found
-- [ ] Return `projectId` to all subsequent tools
-- [ ] Handle edge case: cwd is a subdirectory of the repo root (walk up until `.git` found)
+- [X] Read `cwd` from MCP request context (workspace roots)
+- [X] Query SQLite for matching `repoPath`
+- [X] Auto-create project if not found
+- [X] Return `projectId` to all subsequent tools (via runtime context)
+- [X] Handle edge case: cwd is a subdirectory of the repo root (walk up until `.git` found)
 
-### Tools
-- `detect_project(cwd)` → `{ projectId, name, repoPath, isNew }`
+### Internal API
+- `resolveActiveProject(server)` → `{ projectId, name, repoPath, isNew }`
 
 ### Notes
-- Use `simple-git` to confirm it's a valid git repo
-- Store absolute path in DB as `repoPath`
+- Uses `simple-git` to confirm it's a valid git repo
+- Stores absolute path in DB as `repoPath`
+- Active project persisted in runtime context for Feature 2+ tools
+- Errors thrown as `ConfigurationError` when detection fails
 
 ---
 

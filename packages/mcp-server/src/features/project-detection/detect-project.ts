@@ -1,4 +1,8 @@
-import type { DetectProjectResult } from "../../shared/types.ts";
+import type {
+    DetectProjectResult,
+    ToolErrorContent,
+    ToolSuccessContent,
+} from "../../shared/types.ts";
 
 import { toToolErrorResult } from "../../shared/errors.ts";
 import { parseDetectProjectInput } from "../../shared/validation.ts";
@@ -17,7 +21,9 @@ export const detectProjectOutputShape = {
     isNew: "boolean",
 };
 
-export async function detect_project(rawInput: unknown) {
+export async function detect_project(
+    rawInput: unknown,
+): Promise<ToolSuccessContent<DetectProjectResult> | ToolErrorContent> {
     try {
         const { cwd } = parseDetectProjectInput(rawInput);
         const repoPath = await detectRepoRoot(cwd);
