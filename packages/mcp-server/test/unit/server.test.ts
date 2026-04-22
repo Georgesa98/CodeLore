@@ -22,13 +22,15 @@ import {
 import { ConfigurationError } from "../../src/shared/errors.ts";
 
 describe("server/createServer", () => {
-    it("creates an MCP server without registering detect_project tool", () => {
+    it("creates an MCP server and registers session tools", () => {
         const registerToolSpy = vi.spyOn(McpServer.prototype, "registerTool");
 
         const server = createServer();
 
         expect(server).toBeInstanceOf(McpServer);
-        expect(registerToolSpy).not.toHaveBeenCalled();
+        expect(registerToolSpy).toHaveBeenCalledTimes(2);
+        expect(registerToolSpy.mock.calls[0][0]).toBe("start_session");
+        expect(registerToolSpy.mock.calls[1][0]).toBe("end_session");
 
         registerToolSpy.mockRestore();
     });
@@ -54,9 +56,9 @@ describe("server/createServer", () => {
             listRoots: vi.fn().mockResolvedValue({ roots: [] }),
         });
 
-        await expect(resolveCwdFromWorkspaceRoots(server)).rejects.toBeInstanceOf(
-            ConfigurationError,
-        );
+        await expect(
+            resolveCwdFromWorkspaceRoots(server),
+        ).rejects.toBeInstanceOf(ConfigurationError);
     });
 
     it("resolves active project and stores activeProjectId", async () => {
@@ -108,5 +110,4 @@ describe("server/createServer", () => {
         );
         expect(setActiveProjectIdMock).not.toHaveBeenCalled();
     });
-
 });
