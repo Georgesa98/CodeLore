@@ -22,10 +22,7 @@ import {
 } from "../features/session-management/validation.ts";
 import { getRuntimeContext, setActiveProjectId } from "../shared/context.ts";
 import { ConfigurationError } from "../shared/errors.ts";
-import type {
-    ToolErrorContent,
-    ToolResult,
-} from "../shared/types.ts";
+import type { ToolErrorContent, ToolResult } from "../shared/types.ts";
 
 function getToolErrorMessage(result: {
     content?: Array<{ type: string; text: string }>;
@@ -33,9 +30,7 @@ function getToolErrorMessage(result: {
     return result.content?.find((entry) => entry.type === "text")?.text;
 }
 
-function isToolError(
-    result: ToolResult<unknown>,
-): result is ToolErrorContent {
+function isToolError(result: ToolResult<unknown>): result is ToolErrorContent {
     return "isError" in result && result.isError === true;
 }
 
@@ -67,6 +62,17 @@ export async function resolveActiveProject(server: McpServer) {
     return project;
 }
 
+async function ensureActiveProjectId(server: McpServer) {
+    const context = getRuntimeContext();
+
+    if (context.activeProjectId) {
+        return context.activeProjectId;
+    }
+
+    const project = await resolveActiveProject(server);
+    return project.projectId;
+}
+
 export function createServer() {
     const server = new McpServer({
         name: "codelore-mcp-server",
@@ -82,13 +88,8 @@ export function createServer() {
             outputSchema: startSessionOutputSchema,
         },
         async (args) => {
-            const context = getRuntimeContext();
-            if (!context.activeProjectId) {
-                throw new ConfigurationError(
-                    "No active project. Call detect_project first.",
-                );
-            }
-            const result = await start_session(args, context.activeProjectId);
+            const projectId = await ensureActiveProjectId(server);
+            const result = await start_session(args, projectId);
             if (isToolError(result)) {
                 throw new Error(
                     getToolErrorMessage(result) ?? "Failed to start session",
@@ -109,11 +110,7 @@ export function createServer() {
         },
         async (args) => {
             const context = getRuntimeContext();
-            if (!context.activeProjectId) {
-                throw new ConfigurationError(
-                    "No active project. Call start_session first.",
-                );
-            }
+            await ensureActiveProjectId(server);
             if (!context.activeSessionId) {
                 throw new ConfigurationError("No active session.");
             }
@@ -139,11 +136,7 @@ export function createServer() {
         },
         async (args) => {
             const context = getRuntimeContext();
-            if (!context.activeProjectId) {
-                throw new ConfigurationError(
-                    "No active project. Call detect_project first.",
-                );
-            }
+            const projectId = await ensureActiveProjectId(server);
             if (!context.activeSessionId) {
                 throw new ConfigurationError(
                     "No active session. Call start_session first.",
@@ -152,7 +145,7 @@ export function createServer() {
 
             const result = await update_app_state(
                 args,
-                context.activeProjectId,
+                projectId,
                 context.activeSessionId,
             );
             if (isToolError(result)) {
@@ -175,14 +168,8 @@ export function createServer() {
             outputSchema: getAppStateOutputSchema,
         },
         async (args) => {
-            const context = getRuntimeContext();
-            if (!context.activeProjectId) {
-                throw new ConfigurationError(
-                    "No active project. Call detect_project first.",
-                );
-            }
-
-            const result = await get_app_state(args, context.activeProjectId);
+            const projectId = await ensureActiveProjectId(server);
+            const result = await get_app_state(args, projectId);
             if (isToolError(result)) {
                 throw new Error(
                     getToolErrorMessage(result) ?? "Failed to get app state",
