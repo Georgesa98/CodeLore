@@ -1,0 +1,21 @@
+// ─────────────────────────────────────────
+// SESSION
+// One agent run = one session
+// ─────────────────────────────────────────
+model Session {
+  id          String       @id @default(cuid())
+  projectId   String
+  project     Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  title       String?
+  agentName   String?
+  status      String       @default("active") // active | completed | abandoned
+  summary     String?
+
+  startedAt   DateTime     @default(now())
+  endedAt     DateTime?
+
+  tasks       Task[]
+  decisions   Decision[]
+  fileChanges FileChange[]
+}

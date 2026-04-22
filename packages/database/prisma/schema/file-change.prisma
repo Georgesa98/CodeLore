@@ -1,0 +1,19 @@
+// ─────────────────────────────────────────
+// FILE CHANGE
+// What the agent touched and why
+// ─────────────────────────────────────────
+model FileChange {
+  id         String   @id @default(cuid())
+  projectId  String
+  project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  sessionId  String?
+  session    Session? @relation(fields: [sessionId], references: [id])
+
+  filePath   String
+  changeType String   // created | modified | deleted
+  summary    String?
+  gitCommit  String?  // auto-enriched server-side
+  branch     String?  // auto-enriched server-side
+
+  createdAt  DateTime @default(now())
+}

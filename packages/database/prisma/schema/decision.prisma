@@ -1,0 +1,19 @@
+// ─────────────────────────────────────────
+// DECISION
+// Why X was chosen over Y
+// ─────────────────────────────────────────
+model Decision {
+  id           String   @id @default(cuid())
+  projectId    String
+  project      Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  sessionId    String?
+  session      Session? @relation(fields: [sessionId], references: [id])
+
+  title        String
+  reasoning    String
+  alternatives String?
+  tradeoffs    String?
+  tags         String?  // comma-separated e.g. "auth,database,architecture"
+
+  createdAt    DateTime @default(now())
+}

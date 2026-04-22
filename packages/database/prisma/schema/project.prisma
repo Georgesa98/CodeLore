@@ -1,0 +1,17 @@
+// ─────────────────────────────────────────
+// PROJECT
+// ─────────────────────────────────────────
+model Project {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  repoPath    String   @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  appState    AppState[]
+  sessions    Session[]
+  decisions   Decision[]
+  fileChanges FileChange[]
+  tasks       Task[]
+}
