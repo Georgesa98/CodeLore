@@ -2,8 +2,13 @@
     "name": "@codelore/mcp-server",
     "version": "1.0.0",
     "description": "",
-    "main": "index.js",
+    "type": "module",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
     "scripts": {
+        "dev": "tsx src/index.ts",
+        "build": "tsc -p tsconfig.json",
+        "typecheck": "tsc -p tsconfig.json --noEmit",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "keywords": [],
@@ -11,7 +16,14 @@
     "license": "ISC",
     "packageManager": "pnpm@10.33.0",
     "dependencies": {
+        "@codelore/database": "workspace:*",
         "@modelcontextprotocol/sdk": "^1.29.0",
-        "simple-git": "^3.36.0"
+        "simple-git": "^3.36.0",
+        "zod": "^4.3.6"
+    },
+    "devDependencies": {
+        "@types/node": "^25.6.0",
+        "tsx": "^4.21.0",
+        "typescript": "^6.0.3"
     }
 }
