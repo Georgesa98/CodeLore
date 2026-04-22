@@ -6,7 +6,7 @@ describe("runtime bootstrap (src/index.ts)", () => {
         vi.restoreAllMocks();
     });
 
-    it("starts server and logs success message", async () => {
+    it("starts server without writing a success banner to stdout", async () => {
         const startStdioServerMock = vi.fn().mockResolvedValue(undefined);
 
         vi.doMock("../../src/server/transport.ts", () => ({
@@ -22,9 +22,7 @@ describe("runtime bootstrap (src/index.ts)", () => {
         await Promise.resolve();
 
         expect(startStdioServerMock).toHaveBeenCalledTimes(1);
-        expect(logSpy).toHaveBeenCalledWith(
-            "CodeLore MCP server is running on stdio.",
-        );
+        expect(logSpy).not.toHaveBeenCalled();
         expect(errorSpy).not.toHaveBeenCalled();
     });
 
