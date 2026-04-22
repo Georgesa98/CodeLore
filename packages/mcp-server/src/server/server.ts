@@ -35,15 +35,18 @@ function isToolError(result: ToolResult<unknown>): result is ToolErrorContent {
 }
 
 export async function resolveCwdFromWorkspaceRoots(server: McpServer) {
-    const { roots } = await server.server.listRoots();
+    try {
+        const { roots } = await server.server.listRoots();
 
-    if (roots.length === 0) {
-        throw new ConfigurationError(
-            "MCP request context did not include any workspace roots",
-        );
-    }
-
-    return fileURLToPath(roots[0].uri);
+        if (roots.length === 0) {
+            throw new ConfigurationError(
+                "MCP request context did not include any workspace roots",
+            );
+        } else if (roots.length > 1) {
+            return fileURLToPath(roots[0].uri);
+        }
+    } catch {}
+    return process.cwd();
 }
 
 export async function resolveActiveProject(server: McpServer) {
