@@ -1,8 +1,8 @@
 import type {
-    DetectProjectResult,
     ToolErrorContent,
     ToolSuccessContent,
 } from "../../shared/types.ts";
+import type { DetectProjectResult } from "./types.ts";
 
 import { toToolErrorResult } from "../../shared/errors.ts";
 import { parseDetectProjectInput } from "../../shared/validation.ts";
