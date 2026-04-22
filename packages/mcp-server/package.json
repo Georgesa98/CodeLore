@@ -9,6 +9,7 @@
         "dev": "tsx src/index.ts",
         "build": "tsc -p tsconfig.json",
         "typecheck": "tsc -p tsconfig.json --noEmit",
+        "inspect": "npx @modelcontextprotocol/inspector npx ts-node src/index.ts",
         "test": "vitest run",
         "test:watch": "vitest",
         "test:coverage": "vitest run --coverage",
