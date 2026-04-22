@@ -22,15 +22,17 @@ import {
 import { ConfigurationError } from "../../src/shared/errors.ts";
 
 describe("server/createServer", () => {
-    it("creates an MCP server and registers session tools", () => {
+    it("creates an MCP server and registers session and app-state tools", () => {
         const registerToolSpy = vi.spyOn(McpServer.prototype, "registerTool");
 
         const server = createServer();
 
         expect(server).toBeInstanceOf(McpServer);
-        expect(registerToolSpy).toHaveBeenCalledTimes(2);
+        expect(registerToolSpy).toHaveBeenCalledTimes(4);
         expect(registerToolSpy.mock.calls[0][0]).toBe("start_session");
         expect(registerToolSpy.mock.calls[1][0]).toBe("end_session");
+        expect(registerToolSpy.mock.calls[2][0]).toBe("update_app_state");
+        expect(registerToolSpy.mock.calls[3][0]).toBe("get_app_state");
 
         registerToolSpy.mockRestore();
     });

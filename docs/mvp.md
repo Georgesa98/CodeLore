@@ -5,7 +5,7 @@
 ---
 
 ## Feature 1 — Project Detection
-**Status:** `[X] In Progress`
+**Status:** `[X] Done`
 
 The internal foundation. Not exposed as a public tool — runs automatically before Feature 2+ tools.
 
@@ -28,15 +28,15 @@ The internal foundation. Not exposed as a public tool — runs automatically bef
 ---
 
 ## Feature 2 — Session Management
-**Status:** `[ ] Not Started`
+**Status:** `[X] Done`
 
 Groups everything that happens in one agent run together.
 
 ### Tasks
-- [ ] Create session tied to detected project
-- [ ] Store active sessionId in memory during MCP server runtime
-- [ ] End session with optional summary
-- [ ] Handle case: agent crashes without calling end_session (auto-close stale sessions on next start)
+- [X] Create session tied to detected project
+- [X] Store active sessionId in memory during MCP server runtime
+- [X] End session with optional summary
+- [X] Handle case: agent crashes without calling end_session (auto-close stale sessions on next start)
 
 ### Tools
 - `start_session(title?, agentName?)` → `{ sessionId }`
@@ -49,15 +49,15 @@ Groups everything that happens in one agent run together.
 ---
 
 ## Feature 3 — App State (Living Docs)
-**Status:** `[ ] Not Started`
+**Status:** `[X] Done`
 
 The killer feature. Agent keeps project knowledge up to date as it works.
 
 ### Tasks
-- [ ] Upsert app state by section name
-- [ ] Support markdown content
-- [ ] Timestamp every update with session reference
-- [ ] Implement `get_app_state` so agent can read context at session start
+- [X] Upsert app state by section name
+- [X] Support markdown content
+- [X] Timestamp every update with session reference
+- [X] Implement `get_app_state` so agent can read context at session start
 
 ### Tools
 - `update_app_state(section, content)` → `{ ok }`

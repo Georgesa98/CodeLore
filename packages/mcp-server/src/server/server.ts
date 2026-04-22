@@ -5,11 +5,15 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { detect_project } from "../features/project-detection/detect-project.ts";
 import { start_session } from "../features/session-management/start-session.ts";
 import { end_session } from "../features/session-management/end-session.ts";
+import { get_app_state } from "../features/app-state/get-app-state.ts";
+import { update_app_state } from "../features/app-state/update-app-state.ts";
 import type { DetectProjectResult } from "../features/project-detection/types.ts";
-import type {
-    EndSessionResult,
-    StartSessionResult,
-} from "../features/session-management/types.ts";
+import {
+    getAppStateInputSchema,
+    getAppStateOutputSchema,
+    updateAppStateInputSchema,
+    updateAppStateOutputSchema,
+} from "../features/app-state/validation.ts";
 import {
     endSessionInputSchema,
     endSessionOutputSchema,
@@ -117,6 +121,71 @@ export function createServer() {
             if (isToolError(result)) {
                 throw new Error(
                     getToolErrorMessage(result) ?? "Failed to end session",
+                );
+            }
+
+            return result;
+        },
+    );
+
+    server.registerTool(
+        "update_app_state",
+        {
+            title: "Update App State",
+            description:
+                "Create or update a living documentation section for the active project.",
+            inputSchema: updateAppStateInputSchema,
+            outputSchema: updateAppStateOutputSchema,
+        },
+        async (args) => {
+            const context = getRuntimeContext();
+            if (!context.activeProjectId) {
+                throw new ConfigurationError(
+                    "No active project. Call detect_project first.",
+                );
+            }
+            if (!context.activeSessionId) {
+                throw new ConfigurationError(
+                    "No active session. Call start_session first.",
+                );
+            }
+
+            const result = await update_app_state(
+                args,
+                context.activeProjectId,
+                context.activeSessionId,
+            );
+            if (isToolError(result)) {
+                throw new Error(
+                    getToolErrorMessage(result) ?? "Failed to update app state",
+                );
+            }
+
+            return result;
+        },
+    );
+
+    server.registerTool(
+        "get_app_state",
+        {
+            title: "Get App State",
+            description:
+                "Get app-state sections for the active project, optionally filtered by section.",
+            inputSchema: getAppStateInputSchema,
+            outputSchema: getAppStateOutputSchema,
+        },
+        async (args) => {
+            const context = getRuntimeContext();
+            if (!context.activeProjectId) {
+                throw new ConfigurationError(
+                    "No active project. Call detect_project first.",
+                );
+            }
+
+            const result = await get_app_state(args, context.activeProjectId);
+            if (isToolError(result)) {
+                throw new Error(
+                    getToolErrorMessage(result) ?? "Failed to get app state",
                 );
             }
 
