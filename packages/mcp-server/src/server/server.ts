@@ -7,6 +7,9 @@ import { start_session } from "../features/session-management/start-session.ts";
 import { end_session } from "../features/session-management/end-session.ts";
 import { get_app_state } from "../features/app-state/get-app-state.ts";
 import { update_app_state } from "../features/app-state/update-app-state.ts";
+import { get_decisions } from "../features/decision-logging/get-decision-log.ts";
+import { log_decision } from "../features/decision-logging/log-decision.ts";
+import { update_decision_log } from "../features/decision-logging/update-decision-log.ts";
 import type { DetectProjectResult } from "../features/project-detection/types.ts";
 import {
     getAppStateInputSchema,
@@ -14,6 +17,14 @@ import {
     updateAppStateInputSchema,
     updateAppStateOutputSchema,
 } from "../features/app-state/validation.ts";
+import {
+    getDecisionsInputSchema,
+    getDecisionsOutputSchema,
+    logDecisionInputSchema,
+    logDecisionOutputSchema,
+    updateDecisionLogInputSchema,
+    updateDecisionLogOutputSchema,
+} from "../features/decision-logging/validation.ts";
 import {
     endSessionInputSchema,
     endSessionOutputSchema,
@@ -176,6 +187,73 @@ export function createServer() {
             if (isToolError(result)) {
                 throw new Error(
                     getToolErrorMessage(result) ?? "Failed to get app state",
+                );
+            }
+
+            return result;
+        },
+    );
+
+    server.registerTool(
+        "log_decision",
+        {
+            title: "Log Decision",
+            description:
+                "Create a decision log entry for the active project, and attach it to the current session when available.",
+            inputSchema: logDecisionInputSchema,
+            outputSchema: logDecisionOutputSchema,
+        },
+        async (args) => {
+            const projectId = await ensureActiveProjectId(server);
+            const result = await log_decision(args, projectId);
+            if (isToolError(result)) {
+                throw new Error(
+                    getToolErrorMessage(result) ?? "Failed to log decision",
+                );
+            }
+
+            return result;
+        },
+    );
+
+    server.registerTool(
+        "update_decision_log",
+        {
+            title: "Update Decision Log",
+            description:
+                "Update an existing decision log entry for the active project.",
+            inputSchema: updateDecisionLogInputSchema,
+            outputSchema: updateDecisionLogOutputSchema,
+        },
+        async (args) => {
+            const projectId = await ensureActiveProjectId(server);
+            const result = await update_decision_log(args, projectId);
+            if (isToolError(result)) {
+                throw new Error(
+                    getToolErrorMessage(result) ??
+                        "Failed to update decision log",
+                );
+            }
+
+            return result;
+        },
+    );
+
+    server.registerTool(
+        "get_decisions",
+        {
+            title: "Get Decisions",
+            description:
+                "Get decision logs for the active project, optionally filtered by decision ID and limit.",
+            inputSchema: getDecisionsInputSchema,
+            outputSchema: getDecisionsOutputSchema,
+        },
+        async (args) => {
+            const projectId = await ensureActiveProjectId(server);
+            const result = await get_decisions(args, projectId);
+            if (isToolError(result)) {
+                throw new Error(
+                    getToolErrorMessage(result) ?? "Failed to get decisions",
                 );
             }
 
