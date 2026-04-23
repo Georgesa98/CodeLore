@@ -78,14 +78,14 @@ Agent should be instructed to maintain these via AGENTS.md:
 ---
 
 ## Feature 4 — Decision Logging
-**Status:** `[ ] Not Started`
+**Status:** `[X] Done`
 
 Why X was chosen over Y. The most valuable long-term artifact.
 
 ### Tasks
-- [ ] Create decision record with title, reasoning, alternatives
-- [ ] Link to active session
-- [ ] Implement `get_decisions` for agent to review past decisions
+- [X] Create decision record with title, reasoning, alternatives
+- [X] Link to active session
+- [X] Implement `get_decisions` for agent to review past decisions
 
 ### Tools
 - `log_decision(title, reasoning, alternatives?, tradeoffs?)` → `{ decisionId }`
@@ -98,15 +98,15 @@ Why X was chosen over Y. The most valuable long-term artifact.
 ---
 
 ## Feature 5 — Task Tracking
-**Status:** `[ ] Not Started`
+**Status:** `[ ] Done`
 
 The agent's plan, visible in real time.
 
 ### Tasks
-- [ ] Create tasks with title, description, priority
-- [ ] Update task status (pending → in_progress → done)
-- [ ] Support subtasks via parentId
-- [ ] Get current task list for session
+- [X] Create tasks with title, description, priority
+- [X] Update task status (pending → in_progress → done)
+- [X] Support subtasks via parentId
+- [X] Get current task list for session
 
 ### Tools
 - `create_task(title, description?, priority?)` → `{ taskId }`
@@ -159,9 +159,9 @@ Do not move to the next feature until the current one has:
 
 | Feature              | Status      |
 |----------------------|-------------|
-| Project Detection    | Not Started |
-| Session Management   | Not Started |
-| App State            | Not Started |
-| Decision Logging     | Not Started |
-| Task Tracking        | Not Started |
+| Project Detection    | Done        |
+| Session Management   | Done        |
+| App State            | Done        |
+| Decision Logging     | Done        |
+| Task Tracking        | Done        |
 | File Change Tracking | Not Started |
