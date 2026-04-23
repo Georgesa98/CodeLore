@@ -10,6 +10,9 @@ import { update_app_state } from "../features/app-state/update-app-state.ts";
 import { get_decisions } from "../features/decision-logging/get-decision-log.ts";
 import { log_decision } from "../features/decision-logging/log-decision.ts";
 import { update_decision_log } from "../features/decision-logging/update-decision-log.ts";
+import { get_tasks } from "../features/task-tracking/get-tasks.ts";
+import { update_task } from "../features/task-tracking/update-task.ts";
+import { create_task } from "../features/task-tracking/create-task.ts";
 import type { DetectProjectResult } from "../features/project-detection/types.ts";
 import {
     getAppStateInputSchema,
@@ -31,6 +34,14 @@ import {
     startSessionInputSchema,
     startSessionOutputSchema,
 } from "../features/session-management/validation.ts";
+import {
+    createTaskInputSchema,
+    createTaskOutputSchema,
+    updateTaskInputSchema,
+    updateTaskOutputSchema,
+    getTasksInputSchema,
+    getTasksOutputSchema,
+} from "../features/task-tracking/validation.ts";
 import { getRuntimeContext, setActiveProjectId } from "../shared/context.ts";
 import { ConfigurationError } from "../shared/errors.ts";
 import type { ToolErrorContent, ToolResult } from "../shared/types.ts";
@@ -260,6 +271,67 @@ export function createServer() {
             return result;
         },
     );
+    server.registerTool(
+        "create_task",
+        {
+            title: "Create Task",
+            description:
+                "Create a new task or subtask for the current session.",
+            inputSchema: createTaskInputSchema,
+            outputSchema: createTaskOutputSchema,
+        },
+        async (args) => {
+            const projectId = await ensureActiveProjectId(server);
+            const result = await create_task(args, projectId);
+            if (isToolError(result)) {
+                throw new Error(
+                    getToolErrorMessage(result) ?? "Failed to create task",
+                );
+            }
+            return result;
+        },
+    );
 
+    server.registerTool(
+        "update_task",
+        {
+            title: "Update Task",
+            description:
+                "Update the status of a task (pending, in_progress, done, blocked).",
+            inputSchema: updateTaskInputSchema,
+            outputSchema: updateTaskOutputSchema,
+        },
+        async (args) => {
+            const projectId = await ensureActiveProjectId(server);
+            const result = await update_task(args, projectId);
+            if (isToolError(result)) {
+                throw new Error(
+                    getToolErrorMessage(result) ?? "Failed to update task",
+                );
+            }
+            return result;
+        },
+    );
+
+    server.registerTool(
+        "get_tasks",
+        {
+            title: "Get Tasks",
+            description:
+                "Get the task list for the active session, including nested subtasks.",
+            inputSchema: getTasksInputSchema,
+            outputSchema: getTasksOutputSchema,
+        },
+        async (args) => {
+            const projectId = await ensureActiveProjectId(server);
+            const result = await get_tasks(args, projectId);
+            if (isToolError(result)) {
+                throw new Error(
+                    getToolErrorMessage(result) ?? "Failed to get tasks",
+                );
+            }
+            return result;
+        },
+    );
     return server;
 }
