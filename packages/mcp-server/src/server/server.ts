@@ -13,6 +13,8 @@ import { update_decision_log } from "../features/decision-logging/update-decisio
 import { get_tasks } from "../features/task-tracking/get-tasks.ts";
 import { update_task } from "../features/task-tracking/update-task.ts";
 import { create_task } from "../features/task-tracking/create-task.ts";
+import { get_file_changes } from "../features/track-files/get-file-changes.ts";
+import { track_file_change } from "../features/track-files/track-file-changes.ts";
 import type { DetectProjectResult } from "../features/project-detection/types.ts";
 import {
     getAppStateInputSchema,
@@ -42,6 +44,12 @@ import {
     getTasksInputSchema,
     getTasksOutputSchema,
 } from "../features/task-tracking/validation.ts";
+import {
+    getFileChangesInputSchema,
+    getFileChangesOutputSchema,
+    trackFileChangeInputSchema,
+    trackFileChangeOutputSchema,
+} from "../features/track-files/validation.ts";
 import { getRuntimeContext, setActiveProjectId } from "../shared/context.ts";
 import { ConfigurationError } from "../shared/errors.ts";
 import type { ToolErrorContent, ToolResult } from "../shared/types.ts";
@@ -330,6 +338,58 @@ export function createServer() {
                     getToolErrorMessage(result) ?? "Failed to get tasks",
                 );
             }
+            return result;
+        },
+    );
+    server.registerTool(
+        "track_file_change",
+        {
+            title: "Track File Change",
+            description:
+                "Record a file change (created, modified, deleted). Automatically enriches with git commit and branch.",
+            inputSchema: trackFileChangeInputSchema,
+            outputSchema: trackFileChangeOutputSchema,
+        },
+        async (args) => {
+            const context = getRuntimeContext();
+            const projectId = await ensureActiveProjectId(server);
+            const projectPath = await resolveCwdFromWorkspaceRoots(server);
+            const sessionId = context.activeSessionId ?? undefined;
+            const result = await track_file_change(
+                args,
+                projectId,
+                projectPath,
+                sessionId,
+            );
+            if (isToolError(result)) {
+                throw new Error(
+                    getToolErrorMessage(result) ??
+                        "Failed to track file change",
+                );
+            }
+
+            return result;
+        },
+    );
+
+    server.registerTool(
+        "get_file_changes",
+        {
+            title: "Get File Changes",
+            description:
+                "Get file change logs for the active project, optionally filtered by session ID and limit.",
+            inputSchema: getFileChangesInputSchema,
+            outputSchema: getFileChangesOutputSchema,
+        },
+        async (args) => {
+            const projectId = await ensureActiveProjectId(server);
+            const result = await get_file_changes(args, projectId);
+            if (isToolError(result)) {
+                throw new Error(
+                    getToolErrorMessage(result) ?? "Failed to get file changes",
+                );
+            }
+
             return result;
         },
     );
