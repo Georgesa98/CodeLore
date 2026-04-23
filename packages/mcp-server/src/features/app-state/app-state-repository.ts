@@ -1,18 +1,5 @@
 import { prisma } from "@codelore/database";
-
-export type AppStateRow = {
-    id: string;
-    projectId: string;
-    section: string;
-    content: string;
-    updatedAt: Date;
-    updatedBy: string | null;
-};
-
-type UpsertAppStateInput = {
-    section: string;
-    content: string;
-};
+import type { UpsertAppStateInput, AppStateRow } from "./types.ts";
 
 export async function upsertAppState(
     projectId: string,

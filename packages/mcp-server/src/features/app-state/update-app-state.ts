@@ -5,18 +5,6 @@ import { toToolErrorResult } from "../../shared/errors.ts";
 import { upsertAppState } from "./app-state-repository.ts";
 import { parseUpdateAppStateInput } from "./validation.ts";
 
-export const updateAppStateInputShape = {
-    section: "string",
-    content: "string",
-};
-
-export const updateAppStateOutputShape = {
-    ok: "boolean",
-    section: "string",
-    updatedAt: "string",
-    updatedBy: "string | null",
-};
-
 export async function update_app_state(
     rawInput: unknown,
     projectId: string,

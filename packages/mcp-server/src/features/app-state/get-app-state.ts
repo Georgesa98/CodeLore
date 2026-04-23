@@ -8,14 +8,6 @@ import {
 } from "./app-state-repository.ts";
 import { parseGetAppStateInput } from "./validation.ts";
 
-export const getAppStateInputShape = {
-    section: "string",
-};
-
-export const getAppStateOutputShape = {
-    sections: "array",
-};
-
 export async function get_app_state(
     rawInput: unknown,
     projectId: string,

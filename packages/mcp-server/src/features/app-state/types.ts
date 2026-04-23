@@ -15,3 +15,17 @@ export type UpdateAppStateResult = {
 export type GetAppStateResult = {
     sections: AppStateSection[];
 };
+
+export type AppStateRow = {
+    id: string;
+    projectId: string;
+    section: string;
+    content: string;
+    updatedAt: Date;
+    updatedBy: string | null;
+};
+
+export type UpsertAppStateInput = {
+    section: string;
+    content: string;
+};
